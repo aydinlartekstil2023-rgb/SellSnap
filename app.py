@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-from PIL import Image, ImageEnhance, ImageDraw
+from PIL import Image, ImageEnhance, ImageDraw, ImageFont # ImageFont'u ekledik
 import io
 
 # API Anahtarı
@@ -27,7 +27,7 @@ with st.sidebar:
         "Soft Grey": (225, 225, 225),
         "Modern Marble": (210, 210, 210),
         "Warm Wood": (190, 150, 100),
-        "Luxury Black": (15, 15, 15)
+        "Luxury Black": (10, 10, 10)
     }
     
     st.divider()
@@ -86,18 +86,34 @@ if uploaded_files:
                     img = ImageEnhance.Brightness(img).enhance(brightness)
                     img = ImageEnhance.Contrast(img).enhance(contrast)
                     
-                    # 6. DEV FİLİGRAN (Görünmeme sorunu kökten çözüldü)
+                    # 6. SHUTTERSTOCK TARZI FİLİGRAN
                     draw = ImageDraw.Draw(img)
                     w, h = img.size
-                    wm_color = (130, 130, 130, 160) # Gri ve yarı şeffaf
-                    wm_text = "SELLSNAP AI PREVIEW"
+                    wm_text = "SellSnap AI"
+                    wm_color = (255, 255, 255, 128) # Beyaz ve yarı şeffaf
                     
-                    # Resmi 4 farklı noktadan kaplayan dev yazı
-                    draw.text((w//10, h//4), wm_text, fill=wm_color)
-                    draw.text((w//4, h//2), wm_text, fill=wm_color)
-                    draw.text((w//10, 3*h//4), wm_text, fill=wm_color)
-                    draw.text((w//2, h//3), wm_text, fill=wm_color)
+                    # Font Boyutu ve Tipi
+                    try:
+                        # Streamlit cloud'da varsayılan fontu yüklemeye çalış
+                        font_size = int(min(w, h) / 10) # Resmin boyutuna göre ayarla
+                        font = ImageFont.truetype("arial.ttf", font_size) 
+                    except IOError:
+                        # Eğer arial.ttf yoksa, varsayılan bir font kullan
+                        font = ImageFont.load_default()
+                        font_size = int(min(w, h) / 15) # Varsayılan font daha küçük görünebilir
+                        
+                    # Filigranı 4 köşeye ve ortaya dağıt (köşelerde biraz içeriden başla)
+                    positions = [
+                        (w * 0.05, h * 0.05), # Sol üst
+                        (w * 0.75, h * 0.05), # Sağ üst (metin genişliğini hesaba katarak)
+                        (w * 0.05, h * 0.85), # Sol alt
+                        (w * 0.75, h * 0.85), # Sağ alt
+                        (w * 0.4, h * 0.45)   # Merkez (ürünün üzerine denk gelebilir)
+                    ]
                     
+                    for pos in positions:
+                        draw.text(pos, wm_text, font=font, fill=wm_color)
+                        
                     # Gösterim
                     st.image(img, caption=f'Final Output: {uploaded_file.name}', width=500)
                     
@@ -109,7 +125,7 @@ if uploaded_files:
                         data=buf.getvalue(), 
                         file_name=f"sellsnap_{uploaded_file.name}", 
                         mime="image/png",
-                        key=f"btn_{uploaded_file.name}" # Duplicate ID hatası düzeltildi
+                        key=f"btn_{uploaded_file.name}"
                     )
                 else:
                     st.error(f"Error on {uploaded_file.name}: API check failed.")
