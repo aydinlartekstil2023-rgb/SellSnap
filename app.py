@@ -81,14 +81,18 @@ if uploaded_files:
                     img = ImageEnhance.Brightness(img).enhance(brightness)
                     img = ImageEnhance.Contrast(img).enhance(contrast)
                     
-                    # 6. GÜNCEL DEV FİLİGRAN (Tam Ortada)
+                    # 6. GARANTİLİ DEV FİLİGRAN (Tam Ortada ve Büyük)
                     draw = ImageDraw.Draw(img)
                     w, h = img.size
-                    wm_text = "SellSnap AI\nPreview"
                     
-                    # Yazıyı tam ortaya hizalamak için koordinat hesabı
-                    # font_size yükleyemediğimiz durumlarda yazının yerini daha geniş bir alana yayıyoruz
-                    draw.multiline_text((w//4, h//2.5), wm_text, fill=(160, 160, 160, 140), align="center", spacing=20)
+                    # Filigran metni
+                    line1 = "SellSnap AI"
+                    line2 = "Preview Mode"
+                    
+                    # Koordinatları manuel olarak daha güvenli şekilde veriyoruz
+                    # Ürünün tam ortasına gelecek şekilde büyükçe yazıyoruz
+                    draw.text((w//5, h//2.2), line1, fill=(130, 130, 130, 160))
+                    draw.text((w//5, h//1.8), line2, fill=(130, 130, 130, 160))
                     
                     st.image(img, caption=f'Studio Result: {uploaded_file.name}', width=600)
                     
