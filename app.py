@@ -1,38 +1,38 @@
 import streamlit as st
 import requests
 
-# API Anahtarın (Yeni Metin Belgesi.py içindeki anahtarın)
+# Your API Key (from remove.bg)
 API_KEY = 'fJNYY4acxhupHR9Rpi3Qoriw' 
 
-st.set_page_config(page_title="SellSnap - Profesyonel Arka Plan Silici", page_icon="📸")
+st.set_page_config(page_title="SellSnap - AI Background Remover", page_icon="📸")
 
-# --- YAN PANEL (SIDEBAR) ---
+# --- SIDEBAR ---
 with st.sidebar:
-    st.title("💎 Pro Seçenekler")
-    st.write("Daha fazla fotoğraf düzenlemek için kredi satın alın.")
+    st.title("💎 Pro Options")
+    st.write("Need more credits for your professional photos?")
     
-    # Shopier onaylanınca buradaki linki gerçek ürün linkinle değiştireceğiz
-    st.link_button("50 Kredi Satın Al - 149 TL", "https://www.shopier.com/sellsnap_yakinda")
+    # After Shopier approval, replace this link with your actual product link
+    st.link_button("Buy 50 Credits - $4.99", "https://www.shopier.com/sellsnap_coming_soon")
     
     st.divider()
-    st.info("Ödeme sonrası kredileriniz manuel olarak tanımlanacaktır. Destek için: sellsnap-support@mail.com")
+    st.info("Credits will be manually added to your account after payment. Support: sellsnap-support@mail.com")
 
-# --- ANA SAYFA ---
-st.title("📸 SellSnap: Yapay Zeka ile Arka Plan Sil")
+# --- MAIN PAGE ---
+st.title("📸 SellSnap: AI-Powered Background Remover")
 st.markdown("""
-### 🚀 Ürün Fotoğraflarınızı Saniyeler İçinde Stüdyo Kalitesine Getirin!
-* **Yıldırım Hızı:** Tek tıkla sonuç alın.
-* **Profesyonel:** E-ticaret siteleri (Amazon, Trendyol vb.) için tam uyumlu.
-* **Ücretsiz Deneme:** İlk 3 fotoğrafın temizlenmesi tamamen bizden!
+### 🚀 Transform Your Product Photos into Studio Quality in Seconds!
+* **Lightning Fast:** Get results with just one click.
+* **Professional:** Perfect for e-commerce (Amazon, Etsy, Shopify, etc.).
+* **Free Trial:** First 3 photos are on us!
 """)
 
-uploaded_file = st.file_uploader("Bir fotoğraf seçin...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Choose a photo...", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    st.image(uploaded_file, caption='Yüklenen Fotoğraf', use_container_width=True)
+    st.image(uploaded_file, caption='Uploaded Photo', use_container_width=True)
     
-    if st.button('Arka Planı Temizle'):
-        with st.spinner('İşleniyor...'):
+    if st.button('Remove Background'):
+        with st.spinner('Processing...'):
             response = requests.post(
                 'https://api.remove.bg/v1.0/removebg',
                 files={'image_file': uploaded_file.getvalue()},
@@ -41,8 +41,8 @@ if uploaded_file is not None:
             )
             
             if response.status_code == requests.codes.ok:
-                st.image(response.content, caption='Sonuç', use_container_width=True)
-                st.download_button(label="Fotoğrafı İndir", data=response.content, file_name="sellsnap_sonuc.png", mime="image/png")
-                st.success("İşlem Başarılı!")
+                st.image(response.content, caption='Result', use_container_width=True)
+                st.download_button(label="Download Image", data=response.content, file_name="sellsnap_result.png", mime="image/png")
+                st.success("Success!")
             else:
-                st.error(f"Hata: {response.status_code}. API krediniz bitmiş olabilir.")
+                st.error(f"Error: {response.status_code}. Your API credits might be empty.")
